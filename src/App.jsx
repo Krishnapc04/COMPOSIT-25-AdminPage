@@ -1,9 +1,24 @@
 import React from 'react'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import Login from './Pages/Login';
+import AllParticipant from './Pages/AllParticipant';
+import User from './Components/User';
+import Events from './Pages/Events';
+// import Events from './Pages/Events';
+
 const  App = () => {
   return (
     <>
-      <h1 className='text-red-500 text-3xl text-center'>This is COMPOSIT'25 Admin page</h1>
-    </>
+<Router>
+      <Routes>
+        {/* <Route path="/" element={<AdminPage />} /> */}
+        <Route path="/" element={<Login />} />
+        <Route path="/allUsers" element={<AllParticipant />} />
+        <Route path="/user/:id" element={<User />} />
+        <Route path="/allevents" element={<Events />} />
+        
+      </Routes>
+    </Router>    </>
   )
 }
 
