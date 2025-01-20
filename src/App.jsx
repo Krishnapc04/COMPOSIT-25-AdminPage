@@ -4,6 +4,8 @@ import Login from './Pages/Login';
 import AllParticipant from './Pages/AllParticipant';
 import User from './Components/User';
 import Events from './Pages/Events';
+import SaPage from './Pages/SaPage';
+import Halls from './Pages/Halls';
 // import Events from './Pages/Events';
 
 const  App = () => {
@@ -16,6 +18,8 @@ const  App = () => {
         <Route path="/allUsers" element={<AllParticipant />} />
         <Route path="/user/:id" element={<User />} />
         <Route path="/allevents" element={<Events />} />
+        <Route path="/allSa" element={<SaPage />} />
+        <Route path="/Halls" element={<Halls/>}/>
         
       </Routes>
     </Router>    </>

@@ -15,6 +15,12 @@ const Navbar = () => {
                         <li>
                             <Link to={"/allevents"} className="text-gray-900 dark:text-white hover:underline">Events</Link>
                         </li>
+                        <li>
+                            <Link to={"/allSa"} className="text-gray-900 dark:text-white hover:underline">Student Ambassador`s</Link>
+                        </li>
+                        <li>
+                            <Link to={"/Halls"} className="text-gray-900 dark:text-white hover:underline">Alloted Hall`s</Link>
+                        </li>
                         {/* <li>
                             <Link to={"/home"} className="text-gray-900 dark:text-white hover:underline">Features</Link>
                         </li> */}
