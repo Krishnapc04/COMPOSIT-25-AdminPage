@@ -1,16 +1,23 @@
 import React, { useEffect, useState } from 'react';
+import Fuse from 'fuse.js'; // Import Fuse.js
 import Navbar from '../Components/Navbar';
 import UserBlock from '../Components/UserBlock';
 import BaseUrl from '../const';
 
 const AllParticipant = () => {
   const [users, setUsers] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]); // State for filtered users
-  const [searchTerm, setSearchTerm] = useState(''); // State for search term
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchCategory, setSearchCategory] = useState('name'); // 'name' or 'college'
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1); // State for the current page
-  const [usersPerPage] = useState(10); // Number of users per page
+  const [currentPage, setCurrentPage] = useState(1);
+  const [usersPerPage] = useState(10);
+
+  const fuse = new Fuse(users, {
+    keys: ['name', 'collegeName'], // Fuzzy search on both name and collegeName
+    threshold: 0.4, // Adjust sensitivity (lower is stricter)
+  });
 
   const handleHallAllot = async (userId, hall) => {
     try {
@@ -30,7 +37,6 @@ const AllParticipant = () => {
     }
   };
 
-  // Fetch users on component mount
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -47,9 +53,9 @@ const AllParticipant = () => {
         }
 
         const data = await response.json();
-        const sortedUsers = data.users.sort((a, b) => a.name.localeCompare(b.name)); // Sort users alphabetically by name
-        setUsers(sortedUsers); // Store sorted users
-        setFilteredUsers(sortedUsers); // Initialize filtered users with all users
+        const sortedUsers = data.users.sort((a, b) => a.name.localeCompare(b.name));
+        setUsers(sortedUsers);
+        setFilteredUsers(sortedUsers);
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -64,9 +70,16 @@ const AllParticipant = () => {
   const handleSearch = (e) => {
     const value = e.target.value.toLowerCase();
     setSearchTerm(value);
-    const filtered = users.filter((user) => user.name.toLowerCase().includes(value));
-    setFilteredUsers(filtered);
-    setCurrentPage(1); // Reset to the first page when searching
+
+    // Perform fuzzy search based on the selected category
+    if (value.trim() === '') {
+      setFilteredUsers(users);
+    } else {
+      const result = fuse.search(value).map(({ item }) => item); // Fuzzy search result
+      setFilteredUsers(result);
+    }
+
+    setCurrentPage(1); // Reset to the first page
   };
 
   if (loading) {
@@ -91,14 +104,24 @@ const AllParticipant = () => {
   return (
     <>
       <Navbar />
-      <div className="search-bar flex justify-center mt-4 mb-4">
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={handleSearch}
-          placeholder="Search participants by name"
-          className="border border-gray-300 px-4 py-2 rounded-md w-1/2"
-        />
+      <div className="search-bar flex flex-col items-center mt-4 mb-4">
+        <div className="flex space-x-4">
+          <select
+            value={searchCategory}
+            onChange={(e) => setSearchCategory(e.target.value)}
+            className="border border-gray-300 px-4 py-2 rounded-md"
+          >
+            <option value="name">Search by Name</option>
+            <option value="collegeName">Search by College</option>
+          </select>
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={handleSearch}
+            placeholder={`Search participants by ${searchCategory}`}
+            className="border border-gray-300 px-4 py-2 rounded-md w-1/2"
+          />
+        </div>
       </div>
 
       <div className="participants-list">
