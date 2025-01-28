@@ -6,14 +6,14 @@ import { useNavigate } from 'react-router-dom';
 const SaPage = () => {
   const navigate = useNavigate();
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
   const [SaData, setSaData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
+  const [approvedData, setApprovedData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState('all'); // 'all' or 'approved'
+  const [sortOrder, setSortOrder] = useState('desc');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortOrder, setSortOrder] = useState('desc');
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -33,7 +33,8 @@ const SaPage = () => {
         const data = await response.json();
         const sortedUsers = data.SA.sort((a, b) => a.name.localeCompare(b.name));
         setSaData(sortedUsers);
-        setFilteredData(sortedUsers); // Initialize filtered data
+        setFilteredData(sortedUsers);
+        setApprovedData(sortedUsers.filter((sa) => sa.ApprovedSa));
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -45,7 +46,6 @@ const SaPage = () => {
   }, []);
 
   useEffect(() => {
-    // Filter by search query
     const filtered = SaData.filter((sa) =>
       sa.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -62,11 +62,31 @@ const SaPage = () => {
     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
   };
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const handleApprove = async (id) => {
+    try {
+      const response = await fetch(`${BaseUrl}/api/admin/approve`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ SaId: id, token: localStorage.getItem('Admintoken') }),
+      });
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+
+      const updatedSa = await response.json();
+      setSaData(
+        SaData.map((sa) => (sa.SaId === id ? { ...sa, ApprovedSa: true } : sa))
+      );
+      setApprovedData(
+        SaData.filter((sa) => sa.ApprovedSa || sa.SaId === id)
+      );
+    } catch (err) {
+      console.error('Failed to approve user:', err.message);
+    }
+  };
 
   const handleClick = async (id) => {
     try {
@@ -104,61 +124,115 @@ const SaPage = () => {
       <div className="container mx-auto py-4">
         <h1 className="text-2xl font-bold mb-4">Student Ambassadors</h1>
 
-        {/* Search Bar */}
-        <div className="mb-4">
-          <input
-            type="text"
-            placeholder="Search by name"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg"
-          />
-        </div>
-
-        {/* Sort Button */}
-        <div className="mb-4 flex justify-end">
+        {/* Tabs */}
+        <div className="mb-4 flex justify-center">
           <button
-            onClick={handleSort}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+            onClick={() => setActiveTab('all')}
+            className={`px-4 py-2 mx-2 ${
+              activeTab === 'all'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-200 text-gray-800'
+            } rounded-md`}
           >
-            Sort by Registrations ({sortOrder === 'asc' ? 'Ascending' : 'Descending'})
+            All Student Ambassadors
+          </button>
+          <button
+            onClick={() => setActiveTab('approved')}
+            className={`px-4 py-2 mx-2 ${
+              activeTab === 'approved'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-200 text-gray-800'
+            } rounded-md`}
+          >
+            Approved Student Ambassadors
           </button>
         </div>
 
-        <ul>
-          {currentItems.map((sa, index) => (
-            <li key={index} className="mb-4 border p-4 rounded-lg">
-              <div className="flex justify-around">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-700 truncate">
-                    <span className="font-semibold">Name:</span> {sa.name}
-                  </p>
-                  <p className="text-sm text-gray-600 truncate">
-                    <span className="font-semibold">ID:</span> {sa._id}
-                  </p>
-                  <p className="text-sm text-gray-600 truncate">
-                    <span className="font-semibold">Referral Id:</span> {sa.SaId}
-                  </p>
-                  <p className="text-sm text-gray-600 truncate">
-                    <span className="font-semibold">College:</span> {sa.collegeName}
-                  </p>
-                  <p className="text-sm text-gray-600 truncate">
-                    <span className="font-semibold">Total Registrations:</span> {sa.SaMember.length}
-                  </p>
+        {/* Content based on active tab */}
+        {activeTab === 'all' && (
+          <>
+            {/* Search and Sort */}
+            <div className="mb-4 flex justify-between">
+              <input
+                type="text"
+                placeholder="Search by name"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="px-4 py-2 border rounded-lg"
+              />
+              <button
+                onClick={handleSort}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+              >
+                Sort by Registrations ({sortOrder === 'asc' ? 'Ascending' : 'Descending'})
+              </button>
+            </div>
+
+            <ul>
+              {filteredData.map((sa) => (
+                <li key={sa._id} className="mb-4 border p-4 rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p><strong>Name:</strong> {sa.name}</p>
+                      <p><strong>College:</strong> {sa.collegeName}</p>
+                      <p><strong>Total Registrations:</strong> {sa.SaMember.length}</p>
+                    </div>
+                    <button
+                    onClick={() => handleApprove(sa.SaId)}
+                    disabled={sa.ApprovedSa}
+                    className={`mt-2 px-4 py-2 ${
+                      sa.ApprovedSa ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500'
+                    } text-white rounded-md`}
+                  >
+                    {sa.ApprovedSa ? 'Approved' : 'Approve'}
+                  </button>
+                  </div>
+                  {/* <details>
+                    <summary className="cursor-pointer mt-2 px-4 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600">
+                      View Members
+                    </summary>
+                    <ul className="ml-4 mt-2">
+                      {sa.SaMember.map((member, idx) => (
+                        <li key={idx}>
+                          {member.MemberName}{' '}
+                          <button
+                            onClick={() => handleClick(member.MemberId)}
+                            className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600"
+                          >
+                            View More
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </details> */}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+
+        {activeTab === 'approved' && (
+          <ul>
+            {approvedData.map((sa) => (
+              <li key={sa._id} className="mb-4 border p-4 rounded-lg">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p><strong>Name:</strong> {sa.name}</p>
+                    <p><strong>College:</strong> {sa.collegeName}</p>
+                    <p><strong>Total Registrations:</strong> {sa.SaMember.length}</p>
+                  </div>
                 </div>
-                <details className="mt-2">
-                  <summary className="cursor-pointer px-4 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 w-full">
-                    Members
+                <details>
+                  <summary className="cursor-pointer mt-2 px-4 py-2 bg-blue-500 text-white rounded-md text-sm w-1/4 hover:bg-blue-600">
+                    View Members
                   </summary>
                   <ul className="ml-4 mt-2">
                     {sa.SaMember.map((member, idx) => (
-                      <li key={idx} className="mb-2">
+                      <li key={idx}>
                         {member.MemberName}{' '}
                         <button
-                          className="px-4 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600"
-                          onClick={() => {
-                            handleClick(member.MemberId);
-                          }}
+                          onClick={() => handleClick(member.MemberId)}
+                          className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600"
                         >
                           View More
                         </button>
@@ -166,31 +240,10 @@ const SaPage = () => {
                     ))}
                   </ul>
                 </details>
-              </div>
-            </li>
-          ))}
-        </ul>
-
-        <div className="flex justify-center mt-6">
-          <nav>
-            <ul className="inline-flex space-x-2">
-              {Array.from({ length: Math.ceil(filteredData.length / itemsPerPage) }, (_, i) => i + 1).map((page) => (
-                <li key={page}>
-                  <button
-                    onClick={() => paginate(page)}
-                    className={`px-3 py-1 rounded ${
-                      page === currentPage
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-200 text-gray-800'
-                    }`}
-                  >
-                    {page}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </>
   );
