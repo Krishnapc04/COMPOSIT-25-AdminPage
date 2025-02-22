@@ -15,10 +15,29 @@ const UserBlock = ({ name, id, college, user, onHallAllot }) => {
     navigate(`/user/${id}`, { state: { user } }); // Pass the user data through state
   };
 
-  const handleHallSelection = (hall) => {
+  const handleHallSelection = async (hall) => {
     setSelectedHall(hall);
     setIsDropdownOpen(false); // Close dropdown after selection
     onHallAllot(id, hall); // Call the callback to handle hall allotment
+
+    try {
+      const response = await fetch(`${BaseUrl}/api/user/allotHall`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: id, // Replace with actual name if needed
+          Hall: hall,
+          token: localStorage.getItem('Admintoken')
+        }),
+      });
+      const data = await response.json();
+      console.log(data);
+
+    } catch (error) {
+      console.error("Error generating certificate:", error);
+    }
   };
 
   const toggleDropdown = () => {
@@ -75,6 +94,9 @@ const UserBlock = ({ name, id, college, user, onHallAllot }) => {
         <p className="text-sm text-gray-600 truncate">
           <span className="font-semibold">Hall:</span> {selectedHall || user.Hall }
         </p>
+        <p className="text-sm text-gray-600 truncate">
+          <span className="font-semibold">State:</span> {user.state}
+        </p>
       </div>
       <div className="flex flex-shrink-0 space-x-2 mt-2 sm:mt-0">
         <button className="px-4 py-2 bg-green-500 text-white rounded-md text-sm hover:bg-green-600">
@@ -84,7 +106,7 @@ const UserBlock = ({ name, id, college, user, onHallAllot }) => {
           View More
         </button>
 
-        <div className="relative">
+        <div className="relative" >
           <button
             className="px-4 py-2 bg-yellow-500 text-white rounded-md text-sm hover:bg-yellow-600"
             onClick={toggleDropdown}
@@ -92,7 +114,7 @@ const UserBlock = ({ name, id, college, user, onHallAllot }) => {
             Allot Hall
           </button>
           {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg">
+            <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg" style={{zIndex:"10000"}}>
               <ul className="py-1">
                 {Halls.map((hall) => (
                   <li

@@ -122,7 +122,7 @@ const SaPage = () => {
     <>
       <Navbar />
       <div className="container mx-auto py-4">
-        <h1 className="text-2xl font-bold mb-4">Student Ambassadors</h1>
+        <h1 className="text-2xl font-bold mb-4">Student Ambassadors : {filteredData.length}</h1>
 
         {/* Tabs */}
         <div className="mb-4 flex justify-center">
