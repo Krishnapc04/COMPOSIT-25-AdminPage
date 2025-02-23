@@ -9,7 +9,9 @@ const User = () => {
   if (!user) {
     return <p className="text-center text-red-500">No user data provided.</p>;
   }
-
+  const eventNames = user.events.map(event => event.eventName).join(", ");
+  console.log(eventNames); 
+  
   const handleBack = () => {
     navigate('/allUsers'); // Navigates to the AllParticipants page
   };
@@ -62,6 +64,10 @@ const User = () => {
           <div className="flex justify-between items-center">
             <p className="text-lg font-medium text-gray-700"><strong>Referral:</strong></p>
             <p className="text-lg text-gray-600">{user.referral}</p>
+          </div>
+          <div className="flex justify-between items-center">
+            <p className="text-lg font-medium text-gray-700"><strong>Events:</strong></p>
+            <p className="text-lg text-gray-600">{eventNames}</p>
           </div>
           <div className="flex justify-between items-center">
             <p className="text-lg font-medium text-gray-700"><strong>Created At:</strong></p>
