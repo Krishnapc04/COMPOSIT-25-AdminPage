@@ -9,8 +9,8 @@ const Events = () => {
   const [error, setError] = useState(null);
 
   const events = [
-    'MetaClix', 'Excavate', 'CaseStudy', 'Enigma', 'Technova', 
-    'Ideathon', 'MarketMaterial', 'MetaCode', 'Simulation'
+    'Metaclix', 'Excavate', 'CaseStudy', 'Enigma', 'Technova', 
+    'Ideathon', 'CadVolution', 'MetaCode'
   ];
 
   // Fetch event data when selectedEvent changes
