@@ -11,6 +11,8 @@ const UserBlock = ({ name, id, college, user, onHallAllot }) => {
     "LLR",'RP','RK','AZAD','NEHRU','PATEL'
   ]
 
+  const role = localStorage.getItem('role')
+
   const handleViewMore = () => {
     navigate(`/user/${id}`, { state: { user } }); // Pass the user data through state
   };
@@ -107,12 +109,12 @@ const UserBlock = ({ name, id, college, user, onHallAllot }) => {
         </button>
 
         <div className="relative" >
-          <button
+          {role === "admin"|| role === "publicity" && <button
             className="px-4 py-2 bg-yellow-500 text-white rounded-md text-sm hover:bg-yellow-600"
             onClick={toggleDropdown}
           >
             Allot Hall
-          </button>
+          </button>}
           {isDropdownOpen && (
             <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg" style={{zIndex:"10000"}}>
               <ul className="py-1">
@@ -128,9 +130,9 @@ const UserBlock = ({ name, id, college, user, onHallAllot }) => {
               </ul>
             </div>
           )}
-          <button className="px-4 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600" onClick={handleGenerateCertificate} >
+          {role === "admin" && <button className="px-4 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600" onClick={handleGenerateCertificate} >
           Get Certificate
-        </button>
+        </button>}
         </div>
       </div>
     </div>

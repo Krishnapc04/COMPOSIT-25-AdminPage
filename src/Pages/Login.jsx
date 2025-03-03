@@ -34,6 +34,7 @@ const Login = () => {
 
               console.log(data)
               localStorage.setItem('Admintoken', data.token);
+              localStorage.setItem('role', data.role);
               navigate('/allUsers')
             } else {
               const errorData = await response.json();     

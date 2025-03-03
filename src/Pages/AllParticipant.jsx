@@ -11,12 +11,12 @@ const AllParticipant = () => {
   const [searchCategory, setSearchCategory] = useState('name');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [usersPerPage] = useState(10);
   const [showNonSaUsers, setShowNonSaUsers] = useState(false);
 
+  const role = localStorage.getItem('role');
+
   const fuse = new Fuse(users, {
-    keys: ['name', 'collegeName', 'state'],
+    keys: ['name', 'collegeName', 'state', '_id'],
     threshold: 0.5,
   });
 
@@ -55,8 +55,6 @@ const AllParticipant = () => {
       const result = fuse.search(value).map(({ item }) => item);
       setFilteredUsers(result);
     }
-
-    setCurrentPage(1);
   };
 
   const handleShowNonSaUsers = () => {
@@ -66,7 +64,6 @@ const AllParticipant = () => {
       setFilteredUsers(users.filter(user => user.Sa === false));
     }
     setShowNonSaUsers(!showNonSaUsers);
-    setCurrentPage(1);
   };
 
   const sortByRegistrationTime = () => {
@@ -82,16 +79,10 @@ const AllParticipant = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
-
   return (
     <>
       <Navbar />
+      <h2 className='mt-3 text-center'>Currently logged in as : <b> {role} </b> </h2>
       
       <div className="text-center mt-4">
         <h2 className="text-xl font-bold">Total Registered Users: {filteredUsers.length}</h2>
@@ -133,8 +124,8 @@ const AllParticipant = () => {
       </div>
 
       <div className="participants-list">
-        {currentUsers.length > 0 ? (
-          currentUsers.map((user) => (
+        {filteredUsers.length > 0 ? (
+          filteredUsers.map((user) => (
             <UserBlock
               key={user._id}
               name={user.name}
@@ -147,23 +138,6 @@ const AllParticipant = () => {
           <p>No participants found.</p>
         )}
       </div>
-
-      {totalPages > 1 && (
-        <div className="flex justify-center mt-4">
-          <ul className="flex space-x-2">
-            {[...Array(totalPages).keys()].map((num) => (
-              <li key={num + 1}>
-                <button
-                  onClick={() => paginate(num + 1)}
-                  className={`px-4 py-2 rounded-md ${currentPage === num + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'} hover:bg-blue-300`}
-                >
-                  {num + 1}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
     </>
   );
 };

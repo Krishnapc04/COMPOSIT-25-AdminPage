@@ -2,6 +2,12 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 const Navbar = () => {
+    const handleLogout = () => {
+        localStorage.removeItem('Admintoken')
+        localStorage.removeItem('role')
+    }
+
+    const role = localStorage.getItem('role')
   return (
     <div>
       
@@ -12,18 +18,19 @@ const Navbar = () => {
                         <li>
                             <Link to={"/allusers"} className="text-gray-900 dark:text-white hover:underline">AllUsers</Link>
                         </li>
-                        <li>
+                        {role==="admin" || role === "event" && <li>
                             <Link to={"/allevents"} className="text-gray-900 dark:text-white hover:underline">Events</Link>
-                        </li>
+                        </li>}
                         <li>
                             <Link to={"/allSa"} className="text-gray-900 dark:text-white hover:underline">Student Ambassador`s</Link>
                         </li>
-                        <li>
+                        { role === "admin" || role === "publicity" &&
+                            <li>
                             <Link to={"/Halls"} className="text-gray-900 dark:text-white hover:underline">Alloted Hall`s</Link>
+                        </li>}
+                        <li>
+                            <Link to={"/"} onClick={handleLogout} className="text-gray-900 dark:text-white hover:underline">LogOut</Link>
                         </li>
-                        {/* <li>
-                            <Link to={"/home"} className="text-gray-900 dark:text-white hover:underline">Features</Link>
-                        </li> */}
                     </ul>
                 </div>
             </div>
