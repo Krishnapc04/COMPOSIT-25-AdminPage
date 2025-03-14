@@ -53,7 +53,7 @@ const Accomodation = () => {
 
   // Handle Sorting
   useEffect(() => {
-    const sortedData = [...filteredData].sort((a, b) => {
+    const sortedData = [...data].sort((a, b) => {
       if (sortOption === 'arrivalDate') {
         return new Date(a.arrivalDate) - new Date(b.arrivalDate);
       } else if (sortOption === 'days') {
@@ -65,8 +65,9 @@ const Accomodation = () => {
       }
       return 0;
     });
+  
     setFilteredData(sortedData);
-  }, [sortOption, filteredData]);
+  }, [sortOption, data]);
 
   return (
     <>
