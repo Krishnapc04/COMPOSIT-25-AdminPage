@@ -18,9 +18,11 @@ const Navbar = () => {
                         <li>
                             <Link to={"/allusers"} className="text-gray-900 dark:text-white hover:underline">AllUsers</Link>
                         </li>
-                        {role==="admin" || role === "event" && <li>
+                        {/* {role==="admin" || role === "event" && */}
+                         <li>
                             <Link to={"/allevents"} className="text-gray-900 dark:text-white hover:underline">Events</Link>
-                        </li>}
+                        </li>
+                        {/*  } */}
                         <li>
                             <Link to={"/allSa"} className="text-gray-900 dark:text-white hover:underline">Student Ambassador`s</Link>
                         </li>
@@ -28,6 +30,9 @@ const Navbar = () => {
                             <li>
                             <Link to={"/Halls"} className="text-gray-900 dark:text-white hover:underline">Alloted Hall`s</Link>
                         </li>}
+                            <li>
+                            <Link to={"/Acco"} className="text-gray-900 dark:text-white hover:underline">Accomodation</Link>
+                        </li>
                         <li>
                             <Link to={"/"} onClick={handleLogout} className="text-gray-900 dark:text-white hover:underline">LogOut</Link>
                         </li>

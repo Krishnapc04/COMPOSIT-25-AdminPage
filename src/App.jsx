@@ -6,6 +6,7 @@ import User from './Components/User';
 import Events from './Pages/Events';
 import SaPage from './Pages/SaPage';
 import Halls from './Pages/Halls';
+import Accomodation from './Pages/Accomodation';
 // import Events from './Pages/Events';
 
 const  App = () => {
@@ -20,6 +21,7 @@ const  App = () => {
         <Route path="/allevents" element={<Events />} />
         <Route path="/allSa" element={<SaPage />} />
         <Route path="/Halls" element={<Halls/>}/>
+        <Route path="/Acco" element={<Accomodation/>}/>
         
       </Routes>
     </Router>    </>
