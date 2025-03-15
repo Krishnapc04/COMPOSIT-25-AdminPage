@@ -134,7 +134,7 @@ const Accomodation = () => {
                     <td style={tdStyle}>{user.days}</td>
                     <td style={tdStyle}>{user.arrival}</td>
                     <td style={tdStyle}>{user.arrivalDate}</td>
-                    <td style={tdStyle}>{user.events?.map(event => event.eventName).join(', ') || 'No events'}</td>
+                    <td style={tdStyle}>{user.comingEvent}</td>
                   </tr>
                 ))
               ) : (
