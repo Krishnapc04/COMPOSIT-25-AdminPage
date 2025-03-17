@@ -33,6 +33,9 @@ const Navbar = () => {
                             <li>
                             <Link to={"/Acco"} className="text-gray-900 dark:text-white hover:underline">Accomodation</Link>
                         </li>
+                            {/* <li>
+                            <Link to={"/Certificate"} className="text-gray-900 dark:text-white hover:underline">Generate certificate</Link>
+                        </li> */}
                         <li>
                             <Link to={"/"} onClick={handleLogout} className="text-gray-900 dark:text-white hover:underline">LogOut</Link>
                         </li>

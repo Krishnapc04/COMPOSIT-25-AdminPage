@@ -134,7 +134,7 @@ const Accomodation = () => {
                     <td style={tdStyle}>{user.days}</td>
                     <td style={tdStyle}>{user.arrival}</td>
                     <td style={tdStyle}>{user.arrivalDate}</td>
-                    <td style={tdStyle}>{user.comingEvent}</td>
+                    <td style={tdStyle}><a href={user.screenshot} target='_blank'>View now</a></td>
                   </tr>
                 ))
               ) : (

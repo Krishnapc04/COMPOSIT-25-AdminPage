@@ -97,7 +97,7 @@ const UserBlock = ({ name, id, college, user, onHallAllot }) => {
           <span className="font-semibold">Hall:</span> {selectedHall || user.Hall }
         </p>
         <p className="text-sm text-gray-600 truncate">
-          <span className="font-semibold">State:</span> {user.state}
+          <span className="font-semibold">Created at:</span> {new Date(user.createdAt).toLocaleString()}
         </p>
       </div>
       <div className="flex flex-shrink-0 space-x-2 mt-2 sm:mt-0">

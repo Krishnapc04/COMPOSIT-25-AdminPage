@@ -7,6 +7,7 @@ import Events from './Pages/Events';
 import SaPage from './Pages/SaPage';
 import Halls from './Pages/Halls';
 import Accomodation from './Pages/Accomodation';
+// import CertificatePage from './Pages/Certificate';
 // import Events from './Pages/Events';
 
 const  App = () => {
@@ -22,6 +23,7 @@ const  App = () => {
         <Route path="/allSa" element={<SaPage />} />
         <Route path="/Halls" element={<Halls/>}/>
         <Route path="/Acco" element={<Accomodation/>}/>
+        {/* <Route path="/Certificate" element={<CertificatePage/>}/> */}
         
       </Routes>
     </Router>    </>
