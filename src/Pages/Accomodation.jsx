@@ -122,7 +122,8 @@ const Accomodation = () => {
                 <th style={thStyle}>Days</th>
                 <th style={thStyle}>Arrival Time</th>
                 <th style={thStyle}>Arrival Date</th>
-                <th style={thStyle}>Registered Events</th>
+                <th style={thStyle}>View Payment </th>
+                <th style={thStyle}>Events  </th>
               </tr>
             </thead>
             <tbody>
@@ -135,6 +136,7 @@ const Accomodation = () => {
                     <td style={tdStyle}>{user.arrival}</td>
                     <td style={tdStyle}>{user.arrivalDate}</td>
                     <td style={tdStyle}><a href={user.screenshot} target='_blank'>View now</a></td>
+                    <td style={tdStyle}>{user.comingEvent}</td>
                   </tr>
                 ))
               ) : (
